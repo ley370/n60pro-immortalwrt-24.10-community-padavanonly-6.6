@@ -22,6 +22,17 @@ uci -q set wireless.radio0.disabled='1'
 uci -q set wireless.radio1.disabled='1'
 uci -q commit wireless
 
+# Timezone + NTP (2026-11-16, borrowed from coolsnowwolf/lede zzz-default-settings):
+# default is UTC; set Asia/Shanghai and domestic NTP so logs/schedules are local time.
+uci -q set system.@system[0].timezone='CST-8'
+uci -q set system.@system[0].zonename='Asia/Shanghai'
+uci -q delete system.ntp.server
+uci -q add_list system.ntp.server='ntp1.aliyun.com'
+uci -q add_list system.ntp.server='ntp.tencent.com'
+uci -q add_list system.ntp.server='ntp.ntsc.ac.cn'
+uci -q add_list system.ntp.server='time.apple.com'
+uci -q commit system
+
 # Default LuCI theme: Argon
 uci -q set luci.main.mediaurlbase='/luci-static/argon'
 # Default LuCI language: Simplified Chinese
