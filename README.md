@@ -4,8 +4,8 @@
 
 为磊科 N60 Pro（512MB / 128MB）定制的 ImmortalWrt 24.10-6.6 固件，基于社区版 padavanonly/immortalwrt-mt798x-6.6（分支 openwrt-24.10-6.6）编译。
 
-这是社区版对照库：内核 6.6 LTS、MTK 闭源 mt_wifi 驱动＋WARP 硬件加速＋内置 MTK 版 Turbo ACC、包管理 opkg。
-插件清单与 v13 基本一致（PassWall2+sing-box、AdGuardHome、Argon 等），唯独官方 luci-app-turboacc 一行已注释掉——社区版已内置 MTK 版 Turbo ACC，再加官方版有冲突风险，首次编译须看日志核对。
+这是社区版对照库：内核 6.6 LTS、MTK 闭源加速栈（HNAT＋WARP＋TurboACC-MTK）、包管理 opkg。注意：本库按有线主路由配，无线功能装了闭源 mt_wifi 驱动（参考 padavanonly mt7986-ax6000 配置），但默认关闭（99-defaults 置 wireless.radio0/radio1.disabled=1，mt_wifi 的 LuCI 读的就是这两个开关）；要开无线时在 LuCI 里启用两个 radio、设 SSID/密码即可，不用重刷。
+插件清单与 v13 基本一致（PassWall2+sing-box、AdGuardHome、Argon 等），加速改用 MTK 版：kmod-mediatek_hnat + kmod-warp + luci-app-turboacc-mtk（WARP_CHIPSET=mt7986），QoS 改用 luci-app-eqos-mtk；官方 luci-app-turboacc 与 luci-app-eqos 已停用（与 MTK 版互斥）。2026-11-16 整改：首版没开 HNAT 导致内核编译失败（9999-01-hnat.patch 引用 7 个符号，定义只在 HNAT 开启时才引入），本次按 padavanonly mt7986-nowifi 配置补齐 HNAT/WARP/TurboACC-MTK。风险待实机验证：硬件 NAT 可能绕过 PassWall2/AdGuardHome。
 注意：你是纯有线主路由、WiFi 默认关，闭源 WiFi/WARP 的优势基本用不上；这是本库要验证的点。社区版上游是 padavanonly 个人维护，更新节奏与官方不同，闭源驱动出问题难调试。
 本库默认 LAN 仍由 99-n60pro-defaults 在首次启动时写成 192.168.10.1（社区版源码默认是 192.168.6.1，别被它吓到）。
 
@@ -18,7 +18,7 @@
 - DNS：AdGuardHome 过滤 + PassWall2 国内外分流（SmartDNS 已去掉，避免四层 DNS 串联）
 - VPN：WireGuard（内置于网络接口）
 - DDNS、Attended Sysupgrade（升级保留软件包）、nlbwmon、WoL、UPnP（用户要求增加，刷后在 服务 → UPnP 里启用）
-- 加速：Turbo ACC（官方源；若无则自动跳过，内置硬件流量分载已能跑满千兆）+ BBR 拥塞控制（kmod-tcp-bbr）
+- 加速：MTK 硬件加速（HNAT + WARP + TurboACC-MTK，WARP_CHIPSET=mt7986）+ BBR 拥塞控制（kmod-tcp-bbr）
 - 限速：eqos（官方源，轻量按 IP 限速；QoSmate 已去掉，与硬件加速互斥）
 - IPTV：igmpproxy + udpxy
 - 监控：CPU 温度显示；网页终端 ttyd；设备上网控制；断网看门狗 watchcat
@@ -37,7 +37,7 @@
 ## 注意事项
 
 - 首次编译时间较长，请耐心等待；如果失败，点进失败的步骤看日志。
-- Turbo ACC 走官方源，若官方源没有则自动跳过（内置硬件流量分载已能跑满千兆，不影响使用）。
+- Turbo ACC 走 MTK 版（luci-app-turboacc-mtk），官方版已停用；硬件 NAT 可能绕过代理/DNS，刷机后须实测 PassWall2 与 AdGuardHome。
 - AdGuardHome 的中文语言包官方源没有，已在配置里列出 `luci-i18n-adguardhome-zh-cn`，有源提供就打进去，没有则自动跳过、AdGuardHome 用英文界面。
 - v4 已去掉的包：iStore（依赖 opkg，在 25.12/apk 上不可靠）、SmartDNS（与 AdGuardHome + PassWall 重复）、QoSmate（与硬件加速互斥）、luci-app-statistics（collectd + rrdtool 体积大，已有 nlbwmon）。如需这些功能，刷机后用 LuCI → 系统 → 软件包或 `opkg update && opkg install <包名>` 自行安装。
 - v5 补充：USB 驱动加了 kmod-usb-storage-uas（UASP）和 e2fsprogs（mkfs.ext4）；删了 chenmozhijin 专属的 TURBOACC_INCLUDE_* 两行，改加官方 kmod-tcp-bbr。
