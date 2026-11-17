@@ -7,14 +7,13 @@
 # kept and re-run on every boot, overwriting manual changes). The script
 # always ends with `exit 0`.
 
-# v13: default LAN 192.168.10.1/24 (user decision, scheme B: ONT stays in
-# routing mode, N60 does not dial; its 192.168.1.1/24 overlaps the ONT LAN).
+# 2026-11-18: default LAN 192.168.6.1/24 (DECIDED 2026-11-17 23:21 user: LAN keep 6.1;
+# B #4 running firmware is already 6.1, its 10.1 line did not take effect.
 # DHCP range/lease stay at defaults (start 100, limit 150), so clients get
-# 192.168.10.100-249 with gateway 192.168.10.1. AP (Xiaomi BE6500) is a
-# separate device and keeps its own fixed 192.168.10.2 -- not set here.
+# 192.168.6.100-249 with gateway 192.168.6.1. AP (Xiaomi BE6500) fixed 192.168.6.2 -- not set here.
 # This only applies on first boot of a fresh flash (script deletes itself);
 # it does not change the LAN of an already-running router.
-uci -q set network.lan.ipaddr='192.168.10.1'
+uci -q set network.lan.ipaddr='192.168.6.1'
 uci -q commit network
 
 # Disable wireless by default (wired main router; AP is a separate Xiaomi BE6500)
