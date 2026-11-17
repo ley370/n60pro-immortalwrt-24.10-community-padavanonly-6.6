@@ -66,3 +66,10 @@
 - `diy-part1.sh`：第三方源（v12：passwall2＋passwall_packages，PassWall2 用；其余仍走官方源）
 - `diy-part2.sh`：编译后处理（Rust 编译修复：把 download-ci-llvm 改为 false，防 CI 产物 404）
 - `files/etc/uci-defaults/99-n60pro-defaults`：首次启动设置（默认 LAN 192.168.10.1、关无线、默认 Argon 主题、中文界面；已加 `uci -q` 容错）
+
+## 2026-11-18 简洁版 / 丰富版（状态：DECIDED 2026-11-18 00:08，用户选两版都编，先简洁后丰富）
+- 底版：B #4 成功配置（commit d3a729e，run #4，1h29m，产物 85,454,482 字节，SHA256 2142efef…fe345）。
+- 两版共同改动（建议）：99-defaults 默认 LAN 由 192.168.10.1 改为 192.168.6.1——DECIDED（用户 2026-11-17 23:21：LAN 保持 6.1）；B #4 的 10.1 行实际未生效，当前运行的 B 版就是 6.1，新配置与实测一致。
+- 简洁版：只补 11 行（USB2/vfat/exfat/usbutils/diskman/arpbind/opkg），.bin 预估约 44–45MB。
+- 丰富版：简洁版 + 28 行（adblock/SmartDNS/HAProxy/NTFS/F2FS/mcproxy/SQM/statistics/vnstat2/banip 等），.bin 预估约 50–54MB；新增件装而不默认启用，二选一，冲突项已在配置注释里写明。
+- 编译顺序（建议）：同一 B 库逐个编，先简洁、验 manifest+SHA 再编丰富；每版约 1.5 小时，每小时检查。
