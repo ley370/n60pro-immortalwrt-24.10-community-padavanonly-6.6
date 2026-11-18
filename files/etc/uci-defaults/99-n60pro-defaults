@@ -17,8 +17,13 @@ uci -q set network.lan.ipaddr='192.168.6.1'
 uci -q commit network
 
 # Disable wireless by default (wired main router; AP is a separate Xiaomi BE6500)
-uci -q set wireless.radio0.disabled='1'
-uci -q set wireless.radio1.disabled='1'
+# 2026-11-18 修正：wifi-device 节区名不是 radio0/radio1，而是 l1util 给的
+# MT7986_1_1 / MT7986_1_2（见 padavanonly 源码 package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
+# 的 detect_mtwifi()）；旧的 radio0/radio1 写法 uci set 静默失败，无线一直开着。
+# 改成遍历全部 wifi-device 节区关掉，不依赖具体名字。
+for _sec in $(uci -q show wireless 2>/dev/null | sed -n 's/^wireless\.\([^.=]*\)=wifi-device/\1/p'); do
+  uci -q set wireless."$_sec".disabled='1'
+done
 uci -q commit wireless
 
 # Timezone + NTP (2026-11-16, borrowed from coolsnowwolf/lede zzz-default-settings):
