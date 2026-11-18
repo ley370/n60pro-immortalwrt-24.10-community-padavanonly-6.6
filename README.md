@@ -1,8 +1,8 @@
 # N60 Pro 标准版（standard）— ImmortalWrt 24.10-6.6 社区版
 
-状态：SUGGESTED（2026-11-18）。用户定：“功能要全、插件不重复、都要有 LuCI、
-PassWall2 自动切换”，并说“先分析做好配置文件，待我通知后编译”“就在原社区版库维护编译”。
-本目录只备好 6 个文件，不推库、不触发编译，等用户一句话再动手。
+状态：已推 B 库并编译成功（run #5，2026-11-18 11:13，耗时 2h38m51s；`.bin` 55,522,093 字节，
+SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`）。
+用户定：“功能要全、插件不重复、都要有 LuCI、PassWall2 自动切换”，“就在原社区版库维护编译”。
 
 ## 与简洁版 / 丰富版的关系
 
@@ -11,6 +11,35 @@ PassWall2 自动切换”，并说“先分析做好配置文件，待我通知�
   adblock×3、SmartDNS×3、mcproxy、ntfs-3g、SQM×4、luci-i18n-adguardhome-zh-cn。
 - 保留丰富版新增：PassWall2 HAProxy、NTFS 内核驱动、F2FS、硬盘休眠、分区工具、
   vnstat2、banip。
+
+## 功能插件说明（97 个包 `=y`，配置 SHA256 前 16 位 `77bb1ed4c87da918`）
+
+| 功能 | 插件 | 说明 |
+|---|---|---|
+| 界面 | LuCI + Argon 主题 | 中文界面；主菜单、防火墙中文包 |
+| 代理 | PassWall2 + sing-box | VLESS/Socks 节点，nftables 透明代理；HAProxy 负载均衡，刷后在 LuCI 里配自动切换（leastPing 均衡组 / 备用节点 auto_switch） |
+| 去广告 | AdGuardHome + LuCI（v1.8） | DoH/DoT、查询日志、按客户端统计；24.10 feed 里没有它的 LuCI 界面，diy-part1.sh 从上游 clone |
+| 远程访问 | WireGuard | 在“网络 → 接口”里配，手机在外连回家 |
+| 动态域名 | DDNS | 域名自动指向家里公网 IP |
+| 限速 | eqos-mtk | 按设备限速；SQM 已删（要开 SQM 得先关 HNAT） |
+| 流量统计 | nlbwmon、vnstat2、statistics | 每台设备流量、接口总量、CPU/内存/流量历史曲线 |
+| 上网管控 | accesscontrol、banip | 按时间管设备上网；封禁 IP 段 |
+| IPTV | igmpproxy + udpxy | 组播转单播 |
+| 端口转发 | UPnP（miniupnpd） | 刷后在“服务 → UPnP”里启用；双 NAT 下只开 N60 这一层 |
+| 唤醒 | WoL | 远程唤醒局域网电脑 |
+| 硬件加速 | TurboACC-MTK + HNAT + WARP、BBR | MTK 闭源加速栈；注意：HNAT 可能绕过 PassWall2/AdGuardHome，刷后须实测 |
+| 无线 | mt_wifi + LuCI | 功能在、默认关闭；要开时在 LuCI 里启用两个 radio、设 SSID/密码 |
+| USB 存储 | diskman、USB2/3、ext4/vfat/exfat/NTFS3/F2FS、hd-idle、parted | U 盘扩容 /overlay、格式化、硬盘休眠 |
+| USB 打印机 | p910nd | 9100 端口共享 USB 打印机 |
+| 文件浏览器 | filebrowser | LuCI 里直接管理路由器上的文件 |
+| 网页终端 | ttyd | 网页里开 SSH 终端 |
+| 自定义命令 | luci-app-commands | LuCI 里存常用命令，一点就跑 |
+| 定时重启 | luci-app-autoreboot | 刷后在 LuCI 里设时间，默认不启用 |
+| 断网自愈 | watchcat | 断网自动重启恢复 |
+| 固定 IP | arpbind | IP/MAC 绑定 |
+| 升级 | attendedsysupgrade、opkg 界面 | 升级保留软件包；LuCI 里装包 |
+
+不含的：iStore、adblock、SmartDNS、SQM、Samba/Transmission、QoSmate、OpenClash/Nikki/HomeProxy（原因见下面“不补的”）。
 
 ## 关键点
 
@@ -48,9 +77,11 @@ PassWall2 自动切换”，并说“先分析做好配置文件，待我通知�
   （LAN 192.168.6.1，无线默认关）
 - `.github/workflows/build.yml` — 与三库相同（仅 workflow_dispatch）
 
-## 编译后验收（待用户通知后执行）
+## 编译后验收（已完成，2026-11-18 11:13）
 
-推到 B 库 `ley370/n60pro-immortalwrt-24.10-community-padavanonly-6.6` →
-触发 workflow → 每小时检查 → 产物 `.bin` 约 47–48MB（预估，未实测）→
-SHA256 对 sha256sums、`.manifest` 核对 PassWall2/sing-box/AdGuardHome/
-luci-app-adguardhome/TurboACC/diskman/arpbind 在位。
+已推到 B 库 `ley370/n60pro-immortalwrt-24.10-community-padavanonly-6.6` 并触发，
+run #5 成功，耗时 2h38m51s；产物 `.bin` 55,522,093 字节，
+SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`，
+sha256sums 12/12 OK；`.manifest` 417 行，PassWall2/sing-box/AdGuardHome/
+luci-app-adguardhome/TurboACC/diskman/arpbind/filebrowser/p910nd 九项全在位。
+只有 `.bin`、没有 `.itb`，走 U-Boot 恢复页直刷。
