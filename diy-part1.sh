@@ -19,3 +19,10 @@
 # script idempotent if it ever runs twice.
 grep -q '^src-git passwall_packages ' feeds.conf.default || echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main' >> feeds.conf.default
 grep -q '^src-git passwall2 ' feeds.conf.default || echo 'src-git passwall2 https://github.com/Openwrt-Passwall/openwrt-passwall2.git;main' >> feeds.conf.default
+
+# 2026-11-18 标准版：AdGuardHome 的 LuCI 界面（rufengsuixing/luci-app-adguardhome v1.8）。
+# 24.10 的 feed 里没有 luci-app-adguardhome（immortalwrt/luci openwrt-24.10 分支无此目录；
+# master 分支是另一个重写版，要求 adguardhome >= 0.107.73，而 24.10 feed 只有 0.107.57）。
+# 作者文档的用法是编译时把仓库 clone 进软件包目录；与 passwall feed 同样跟 master 浮动、不钉哈希。
+# 编译后以 .manifest 中 luci-app-adguardhome 在位为准。
+[ -d package/luci-app-adguardhome ] || git clone --depth 1 https://github.com/rufengsuixing/luci-app-adguardhome.git package/luci-app-adguardhome
