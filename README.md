@@ -8,16 +8,17 @@ SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`）。
 ② 无线默认关未生效——根因是 wifi-device 节区名是 MT7986_1_1/2，不是 radio0/radio1，
 99 脚本的 uci set 静默失败；#6 改成遍历全部 wifi-device 节区关掉，并让 mtwifi 的
 detect 生成的配置天生就是 disabled=1。
+2026-11-18 晚：用户决定删文件浏览器（filebrowser + LuCI + 中文包三行），已推库；暂不重编（用户 22:46 定），下一轮编时再触发。
 
 ## 与简洁版 / 丰富版的关系
 
-- 底版 = 丰富版（99 个包）去重后 97 个包（2026-11-18 用户决定加回 statistics、加 USB 打印机共享、文件浏览器、定时重启、自定义命令）；简洁版是其子集。
-- 去重删了 13 行（见 `n60-pro.config` 文末注释与对照文档）：
+- 底版 = 丰富版（99 个包）去重后 94 个包（2026-11-18 用户决定加回 statistics、加 USB 打印机共享、定时重启、自定义命令；文件浏览器 2026-11-18 晚用户决定删）；简洁版是其子集。
+- 去重删了 13 行（见 `n60-pro.config` 文末注释与对照文档），另删文件浏览器 3 行（2026-11-18 晚用户决定删）：
   adblock×3、SmartDNS×3、mcproxy、ntfs-3g、SQM×4、luci-i18n-adguardhome-zh-cn。
 - 保留丰富版新增：PassWall2 HAProxy、NTFS 内核驱动、F2FS、硬盘休眠、分区工具、
   vnstat2、banip。
 
-## 功能插件说明（97 个包 `=y`，配置 SHA256 前 16 位 `77bb1ed4c87da918`）
+## 功能插件说明（94 个包 `=y`，配置 SHA256 前 16 位 `a6f87c4d7b3e580b`）
 
 | 功能 | 插件 | 说明 |
 |---|---|---|
@@ -36,7 +37,6 @@ detect 生成的配置天生就是 disabled=1。
 | 无线 | mt_wifi + LuCI | 功能在；默认关闭（#5 未生效：关无线脚本用的 radio0/radio1 节区名不对，实际是 MT7986_1_1/2；#6 已修，待验证）；要开时在 LuCI 里启用两个 radio、设 SSID/密码 |
 | USB 存储 | diskman、USB2/3、ext4/vfat/exfat/NTFS3/F2FS、hd-idle、parted | U 盘扩容 /overlay、格式化、硬盘休眠 |
 | USB 打印机 | p910nd | 9100 端口共享 USB 打印机 |
-| 文件浏览器 | filebrowser | LuCI 里直接管理路由器上的文件 |
 | 网页终端 | ttyd | 网页里开 SSH 终端 |
 | 自定义命令 | luci-app-commands | LuCI 里存常用命令，一点就跑 |
 | 定时重启 | luci-app-autoreboot | 刷后在 LuCI 里设时间，默认不启用 |
@@ -66,9 +66,8 @@ detect 生成的配置天生就是 disabled=1。
   luci-app-statistics（collectd + rrdtool），CPU/内存/流量随时间的图表。
 - **USB 打印机共享**：2026-11-18 用户决定加 p910nd + LuCI（kmod-usb-printer），
   USB 打印机插上即全网共享，9100 端口 raw 打印。
-- **文件浏览器、定时重启**：2026-11-18 用户决定都加。文件浏览器（filebrowser + LuCI）
-  在 LuCI 里直接管理路由器上的文件；定时重启（luci-app-autoreboot）刷后在 LuCI 里
-  设时间，默认不启用。
+- **定时重启**：2026-11-18 用户决定加（luci-app-autoreboot），刷后在 LuCI 里设时间，默认不启用。
+- **文件浏览器已删**：2026-11-18 晚用户决定删（filebrowser + LuCI + 中文包三行），不编进固件。
 - **自定义命令**：2026-11-18 用户决定加 luci-app-commands + 中文包，在 LuCI 里存
   常用 shell 命令，一点就跑。
 - **不补的**（沿用已定口径）：Samba/Transmission（NAS 已有）、QoSmate（与 HNAT 互斥）、
@@ -76,7 +75,7 @@ detect 生成的配置天生就是 disabled=1。
 
 ## 文件
 
-- `n60-pro.config` — 97 个包 `=y`，SHA256 前 16 位 `77bb1ed4c87da918`（本地实测）
+- `n60-pro.config` — 94 个包 `=y`，SHA256 前 16 位 `a6f87c4d7b3e580b`（本地实测）
 - `diy-part1.sh` — passwall 双 feed + AdGuardHome LuCI clone；`bash -n` 通过
 - `diy-part2.sh`、`files/etc/uci-defaults/99-n60pro-defaults` — 与丰富版相同
   （LAN 192.168.6.1；无线默认关——#5 未生效，#6 修：关无线改遍历节区名 + detect 生成即 disabled，待验证）
