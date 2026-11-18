@@ -3,6 +3,11 @@
 状态：已推 B 库并编译成功（run #5，2026-11-18 11:13，耗时 2h38m51s；`.bin` 55,522,093 字节，
 SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`）。
 用户定：“功能要全、插件不重复、都要有 LuCI、PassWall2 自动切换”，“就在原社区版库维护编译”。
+2026-11-18 晚：标准版 #5 两项实测反馈待修（已改，待用户确认后重编 run #6）：
+① NAS 菜单并入服务（hd-idle、p910nd 从 admin/nas 改到 admin/services）；
+② 无线默认关未生效——根因是 wifi-device 节区名是 MT7986_1_1/2，不是 radio0/radio1，
+99 脚本的 uci set 静默失败；#6 改成遍历全部 wifi-device 节区关掉，并让 mtwifi 的
+detect 生成的配置天生就是 disabled=1。
 
 ## 与简洁版 / 丰富版的关系
 
@@ -28,7 +33,7 @@ SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`）。
 | 端口转发 | UPnP（miniupnpd） | 刷后在“服务 → UPnP”里启用；双 NAT 下只开 N60 这一层 |
 | 唤醒 | WoL | 远程唤醒局域网电脑 |
 | 硬件加速 | TurboACC-MTK + HNAT + WARP、BBR | MTK 闭源加速栈；注意：HNAT 可能绕过 PassWall2/AdGuardHome，刷后须实测 |
-| 无线 | mt_wifi + LuCI | 功能在、默认关闭；要开时在 LuCI 里启用两个 radio、设 SSID/密码 |
+| 无线 | mt_wifi + LuCI | 功能在；默认关闭（#5 未生效：关无线脚本用的 radio0/radio1 节区名不对，实际是 MT7986_1_1/2；#6 已修，待验证）；要开时在 LuCI 里启用两个 radio、设 SSID/密码 |
 | USB 存储 | diskman、USB2/3、ext4/vfat/exfat/NTFS3/F2FS、hd-idle、parted | U 盘扩容 /overlay、格式化、硬盘休眠 |
 | USB 打印机 | p910nd | 9100 端口共享 USB 打印机 |
 | 文件浏览器 | filebrowser | LuCI 里直接管理路由器上的文件 |
@@ -74,7 +79,7 @@ SHA256 `a2ba92fb74795cc37d110d4f13fe48c1a131f3e89d0d9f063b6120ba6b3bd858`）。
 - `n60-pro.config` — 97 个包 `=y`，SHA256 前 16 位 `77bb1ed4c87da918`（本地实测）
 - `diy-part1.sh` — passwall 双 feed + AdGuardHome LuCI clone；`bash -n` 通过
 - `diy-part2.sh`、`files/etc/uci-defaults/99-n60pro-defaults` — 与丰富版相同
-  （LAN 192.168.6.1，无线默认关）
+  （LAN 192.168.6.1；无线默认关——#5 未生效，#6 修：关无线改遍历节区名 + detect 生成即 disabled，待验证）
 - `.github/workflows/build.yml` — 与三库相同（仅 workflow_dispatch）
 
 ## 编译后验收（已完成，2026-11-18 11:13）
