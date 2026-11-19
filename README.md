@@ -10,11 +10,6 @@
 - MTK 闭源加速栈：HNAT + WARP + TurboACC-MTK（WARP_CHIPSET=mt7986）
 - 闭源 mt_wifi 驱动（已装，默认关闭）
 
-### 当前构建
-
-- #6：97 个包，sysupgrade `.bin` 55,522,093 字节，SHA256 `d4997eb99ac8e890c47f5afe7e6c6219ffb28f667862a45d1593c6953b4642c8`，sha256sums 12/12，manifest 417 行
-- #6 仍含文件浏览器（编的是删之前版本）；仓库当前配置为 94 个包（文件浏览器已删），尚未重编
-
 ### 默认设置
 
 - LAN：192.168.6.1/24，DHCP 默认（客户端 192.168.6.100–249）
@@ -39,7 +34,7 @@
 | 去广告 | AdGuardHome + LuCI（v1.8，diy-part1.sh 从上游 clone，24.10 feed 里没有该包） |
 | 远程访问 | WireGuard（luci-proto-wireguard + wireguard-tools） |
 | 动态域名 | DDNS |
-| 限速 | eqos-mtk；SQM 已删（启用前须关 HNAT） |
+| 限速 | eqos-mtk |
 | 流量统计 | nlbwmon、vnstat2、statistics |
 | 上网管控 | accesscontrol、banip |
 | IPTV | igmpproxy + udpxy |
@@ -55,8 +50,6 @@
 | 断网自愈 | watchcat |
 | 固定 IP | arpbind |
 | 升级 | attendedsysupgrade、opkg 界面 |
-
-未包含：iStore、adblock、SmartDNS、SQM、mcproxy、文件浏览器、Samba / Transmission（NAS 已有）、QoSmate（与 HNAT 互斥）、OpenClash / Nikki / HomeProxy（代理核心只留 PassWall2）。
 
 效果说明：
 
@@ -100,3 +93,5 @@
 | 2026-11-18 22:12 | 标准版 #6 | 编成（97 包，.bin 55,522,093 字节，SHA256 `d4997eb9…`）；NAS 菜单并入服务、无线默认关双保险 |
 | 2026-11-18 22:47 | 标准版 #6（未重编） | 文件浏览器已删（配置 94 包，SHA256 `a6f87c4d…`），已推库 |
 | 2026-11-18 23:58 | 标准版 #6（未重编） | README 按四类口径重写并增加修订记录（本条） |
+| 2026-11-19 02:11 | 标准版 #7 | 编成（94 包，文件浏览器已删；.bin 48,046,893 字节，SHA256 `1fdfe433…`） |
+| 2026-11-19 08:09 | 标准版 #7（未重编） | README 口径调整：删“未包含”与“当前构建”两节，历史记录只留修订记录；README 只说明当前版本 |
