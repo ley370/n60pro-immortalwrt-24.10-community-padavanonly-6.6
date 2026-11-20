@@ -36,7 +36,7 @@
 | 动态域名 | DDNS |
 | 限速 | eqos-mtk |
 | 流量统计 | nlbwmon、vnstat2、statistics |
-| 上网管控 | accesscontrol、banip |
+| 上网管控 | banip |
 | IPTV | igmpproxy + udpxy |
 | 端口转发 | UPnP（miniupnpd） |
 | 唤醒 | WoL |
@@ -95,3 +95,4 @@
 | 2026-11-18 23:58 | 标准版 #6（未重编） | README 按四类口径重写并增加修订记录（本条） |
 | 2026-11-19 02:11 | 标准版 #7 | 编成（94 包，文件浏览器已删；.bin 48,046,893 字节，SHA256 `1fdfe433…`） |
 | 2026-11-19 08:09 | 标准版 #7（未重编） | README 口径调整：删“未包含”与“当前构建”两节，历史记录只留修订记录；README 只说明当前版本 |
+| 2026-11-20 10:40 | 标准版 #7（未重编） | README 修正：上网管控删 accesscontrol，只留 banip（#7 manifest 414 行核对无此包） |
